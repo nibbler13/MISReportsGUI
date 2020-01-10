@@ -1,0 +1,102 @@
+﻿<Window x:Class="MISReportsGUI.WindowAccessRights"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MISReportsGUI"
+        mc:Ignorable="d"
+        Title="Права доступа"
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF0F0F0"
+        MinHeight="450"
+        MinWidth="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Список пользователей:"/>
+
+        <DataGrid Grid.Row="1" 
+                  Margin="0,6,0,10"
+                  IsReadOnly="False"
+                  SelectionUnit="FullRow"
+                  CanUserDeleteRows="False"
+                  CanUserAddRows="False"
+                  CanUserReorderColumns="False"
+                  HorizontalGridLinesBrush="#FFC8C8C8"
+                  VerticalGridLinesBrush="LightGray"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding Users}"
+                  x:Name="DataGridUsers"
+                  SelectionMode="Single"
+                  SelectionChanged="DataGridUsers_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Имя пользователя" 
+                                    Binding="{Binding Name, Mode=OneWay}"/>
+                <DataGridCheckBoxColumn Header="Администратор"
+                                        Binding="{Binding IsAdministrator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTemplateColumn Header="Разрешенные отчеты">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding ReportsAvailable, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                           Width="30"
+                                           HorizontalAlignment="Center"/>
+                                <Button Content="..." Click="ButtonSelectReports_Click"
+                                        Margin="10,0,0,0"
+                                        Width="20"
+                                        Grid.Column="1"
+                                        IsEnabled="{Binding IsEditingEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal">
+            <Button Width="100"
+                    Height="25"
+                    x:Name="ButtonAddUser"
+                    Click="ButtonAddUser_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Media/Add_16x.png" Stretch="None"/>
+                    <TextBlock Text="Добавить" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <Button Width="100" 
+                    Height="25"
+                    Margin="20,0,0,0"
+                    IsEnabled="False"
+                    x:Name="ButtonDeleteUser"
+                    Click="ButtonDeleteUser_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Media/Remove_16x.png" Stretch="None"/>
+                    <TextBlock Text="Удалить" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <Button Grid.Row="2"
+                HorizontalAlignment="Right"
+                Width="100"
+                x:Name="ButtonSave"
+                Click="ButtonSave_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Save_16x.png" Stretch="None"/>
+                <TextBlock Text="Сохранить" Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

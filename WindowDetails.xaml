@@ -11,7 +11,8 @@
         Background="#FFF0F0F0"
         WindowStartupLocation="CenterOwner"
         MinHeight="400"
-        MinWidth="600" Icon="icon.ico">
+        MinWidth="600"
+        Icon="icon.ico">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -22,13 +23,20 @@
                  x:Name="TextBoxMain"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  TextWrapping="WrapWithOverflow"
-                 IsReadOnly="True"/>
+                 IsReadOnly="True"
+                 MaxLines="9999999"
+                 MaxLength="9999999"/>
 
         <Button Grid.Row="1" 
-                Content="Закрыть"
+                Height="25"
                 HorizontalAlignment="Center"
-                Width="60"
+                Width="80"
                 Click="ButtonClose_Click"
-                x:Name="ButtonClose"/>
+                x:Name="ButtonClose">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Close_16x.png" Stretch="None"/>
+                <TextBlock  Text="Закрыть" Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>

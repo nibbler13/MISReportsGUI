@@ -1,0 +1,106 @@
+﻿<Window x:Class="MISReportsGUI.WindowSelectReports"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MISReportsGUI"
+        mc:Ignorable="d"
+        Title="WindowSelectReports" 
+        Height="450"
+        Width="800"
+        Icon="icon.ico"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF0F0F0"
+        MinHeight="450"
+        MinWidth="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Доступные отчеты"/>
+
+        <TextBlock Text="Выбранные отчеты:"
+                   Grid.Column="4"/>
+
+        <ListBox Grid.Row="2" 
+                 ItemsSource="{Binding ReportsAvailable}"
+                 SelectionChanged="ListBox_SelectionChanged"
+                 x:Name="ListBoxReportsAvailable"
+                 MouseDoubleClick="ListBoxReportsAvailable_MouseDoubleClick"
+                 SelectionMode="Extended"/>
+
+        <StackPanel Grid.Row="2"
+                    Grid.Column="2"
+                    VerticalAlignment="Center">
+            <Button Width="25"
+                    Height="25"
+                    x:Name="ButtonOneToSelected"
+                    Click="ButtonMoveReports_Click"
+                    ToolTip="Переместить в список выбранных"
+                    IsEnabled="False">
+                <Image Source="Media/nextDay.png" Stretch="None"/>
+            </Button>
+
+            <Button Width="25"
+                    Height="25"
+                    Margin="0,10,0,10"
+                    x:Name="ButtonAllToSelected"
+                    Click="ButtonMoveReports_Click"
+                    ToolTip="Переместить все в список выбранных"
+                    IsEnabled="False">
+                <Image Source="Media/nextMonth.png" Stretch="None"/>
+            </Button>
+
+            <Button Width="25"
+                    Height="25"
+                    Click="ButtonMoveReports_Click"
+                    x:Name="ButtonAllToAvailable"
+                    ToolTip="Переместить все в список доступных"
+                    IsEnabled="False">
+                <Image Source="Media/previousMonth.png" Stretch="None"/>
+            </Button>
+
+            <Button Width="25"
+                    Height="25"
+                    Margin="0,10,0,0"
+                    Click="ButtonMoveReports_Click"
+                    x:Name="ButtonOneToAvailable"
+                    ToolTip="Переместить в список доступных"
+                    IsEnabled="False">
+                <Image Source="Media/previousDay.png" Stretch="None"/>
+            </Button>
+        </StackPanel>
+        
+        <ListBox Grid.Row="2" 
+                 Grid.Column="4" 
+                 ItemsSource="{Binding ReportsSelected}"
+                 SelectionChanged="ListBox_SelectionChanged"
+                 MouseDoubleClick="ListBoxReportsAvailable_MouseDoubleClick"
+                 x:Name="ListBoxReportsSelected"
+                 SelectionMode="Extended"/>
+
+        <Button Grid.Row="4"
+                Grid.ColumnSpan="5"
+                HorizontalAlignment="Center"
+                Width="100"
+                Height="25"
+                Click="ButtonSave_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Save_16x.png" Stretch="None"/>
+                <TextBlock Text="Сохранить" Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

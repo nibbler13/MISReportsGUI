@@ -11,14 +11,41 @@ namespace MISReportsGUI {
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
+		private ItemUser currentUser = null;
 		public ObservableCollection<ItemReport> ReportsList { get; set; } = new ObservableCollection<ItemReport>();
 
 		public MainWindow() {
 			InitializeComponent();
 			DataGridReports.DataContext = this;
+			DataGridReports.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(MISReports.ItemReport.Name), System.ComponentModel.ListSortDirection.Ascending));
+			DatePickerBegin.SelectedDate = DateTime.Now;
+			DatePickerEnd.SelectedDate = DateTime.Now;
 
-			foreach (ReportsInfo.Type type in Enum.GetValues(typeof(ReportsInfo.Type))) {
-				ReportsList.Add(new ItemReport(type.ToString()));
+			Loaded += (s, e) => { UpdateReportList(); };
+		}
+
+		private void UpdateReportList() {
+			ReportsList.Clear();
+			currentUser = null;
+
+			string currentUserName = Environment.UserName.ToLower();
+			foreach (ItemUser item in UserList.Instance.Users) {
+				if (item.UserName.ToLower().StartsWith(currentUserName)) {
+					currentUser = item;
+					break;
+				}
+			}
+
+			if (currentUser == null) {
+				MessageBox.Show(this, "Для Вас не заданы права доступа к отчетам. Пожалуйста, обратитесь в службу технической поддержки.",
+					"", MessageBoxButton.OK, MessageBoxImage.Information);
+			} else {
+				if (currentUser.IsAdministrator)
+					foreach (ReportsInfo.Type type in Enum.GetValues(typeof(ReportsInfo.Type)))
+						ReportsList.Add(new ItemReport(type.ToString()));
+				else
+					foreach (ReportsInfo.Type type in currentUser.ReportsTypesAvailable)
+						ReportsList.Add(new ItemReport(type.ToString()));
 			}
 		}
 
@@ -28,8 +55,9 @@ namespace MISReportsGUI {
 				return;
 
 			string title = itemReport.Name + ", Получатели:";
-			string text = itemReport.MailTo.Replace(";", Environment.NewLine);
-			WindowDetails windowDetails = new WindowDetails(title, text, this);
+			string text = itemReport.MailTo != null ? itemReport.MailTo.Replace(";", Environment.NewLine) : string.Empty;
+			WindowDetails windowDetails = new WindowDetails(title, text);
+			windowDetails.Owner = this;
 			windowDetails.ShowDialog();
 		}
 
@@ -40,9 +68,11 @@ namespace MISReportsGUI {
 
 			string title = itemReport.Name + ", Запрос:";
 			string text = itemReport.SqlQuery;
-			WindowDetails windowDetails = new WindowDetails(title, text, this);
+			WindowDetails windowDetails = new WindowDetails(title, text);
+			windowDetails.Owner = this;
 			windowDetails.ShowDialog();
 		}
+
 		private void ButtonTemplate_Click(object sender, RoutedEventArgs e) {
 			ItemReport itemReport = (sender as Button).DataContext as ItemReport;
 			if (itemReport == null)
@@ -85,8 +115,69 @@ namespace MISReportsGUI {
 			itemReport.SetPeriod(DatePickerBegin.SelectedDate.Value, DatePickerEnd.SelectedDate.Value);
 			string title = itemReport.Name + ", формирование за период с " + 
 				itemReport.DateBegin.ToShortDateString() + " по " + itemReport.DateEnd.ToShortDateString();
-			WindowDetails windowDetails = new WindowDetails(title, string.Empty, this, itemReport);
+			WindowDetails windowDetails = new WindowDetails(title, string.Empty, currentUser, itemReport);
+			windowDetails.Owner = this;
 			windowDetails.ShowDialog();
+		}
+
+		private void ButtonAccessRights_Click(object sender, RoutedEventArgs e) {
+			bool? isAccesGrunted = true;
+			bool? dialogResult = false;
+
+			if (currentUser == null || !currentUser.IsAdministrator) {
+				WindowEnterPassword windowEnterPassword = new WindowEnterPassword();
+				windowEnterPassword.Owner = this;
+				isAccesGrunted = windowEnterPassword.ShowDialog();
+			}
+
+			if (isAccesGrunted == true) {
+				WindowAccessRights windowAccessRights = new WindowAccessRights();
+				windowAccessRights.Owner = this;
+				dialogResult = windowAccessRights.ShowDialog();
+			}
+
+			if (dialogResult == true)
+				UpdateReportList();
+		}
+
+		private void ButtonDateSelect_Click(object sender, RoutedEventArgs e) {
+			string param = (sender as Button).Tag.ToString();
+			DateTime dateBegin = DatePickerBegin.SelectedDate.Value;
+			DateTime dateEnd = DatePickerEnd.SelectedDate.Value;
+
+			if (param.Equals("EquateEndDateToBeginDate")) {
+				dateEnd = dateBegin;
+			} else if (param.Equals("SetDatesToCurrentDay")) {
+				dateBegin = DateTime.Now;
+				dateEnd = dateBegin;
+			} else if (param.Equals("SetDatesToCurrentWeek")) {
+				dateEnd = DateTime.Now;
+				int dayOfWeek = (int)dateEnd.DayOfWeek;
+				if (dayOfWeek == 0)
+					dayOfWeek = 7;
+				dateBegin = dateEnd.AddDays(-1 * (dayOfWeek - 1));
+			} else if (param.Equals("SetDatesToCurrentMonth")) {
+				dateBegin = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+				dateEnd = dateBegin.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - 1);
+			} else if (param.Equals("SetDatesToCurrentYear")) {
+				dateBegin = new DateTime(DateTime.Now.Year, 1, 1);
+				dateEnd = new DateTime(DateTime.Now.Year, 12, DateTime.DaysInMonth(DateTime.Now.Year, 12));
+			} else if (param.Equals("GoToPreviousMonth")) {
+				dateEnd = new DateTime(dateBegin.Year, dateBegin.Month, 1).AddDays(-1);
+				dateBegin = dateEnd.AddDays(-1 * (DateTime.DaysInMonth(dateEnd.Year, dateEnd.Month) - 1));
+			} else if (param.Equals("GoToPreviousDay")) {
+				dateBegin = dateBegin.AddDays(-1);
+				dateEnd = dateBegin;
+			} else if (param.Equals("GoToNextDay")) {
+				dateBegin = dateBegin.AddDays(1);
+				dateEnd = dateBegin;
+			} else if (param.Equals("GoToNextMonth")) {
+				dateBegin = new DateTime(dateBegin.Year, dateBegin.Month, DateTime.DaysInMonth(dateBegin.Year, dateBegin.Month)).AddDays(1);
+				dateEnd = dateBegin.AddDays((DateTime.DaysInMonth(dateBegin.Year, dateBegin.Month) - 1));
+			}
+
+			DatePickerBegin.SelectedDate = dateBegin;
+			DatePickerEnd.SelectedDate = dateEnd;
 		}
 	}
 }

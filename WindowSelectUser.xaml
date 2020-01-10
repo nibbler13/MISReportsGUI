@@ -1,0 +1,95 @@
+﻿<Window x:Class="MISReportsGUI.WindowSelectUser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MISReportsGUI"
+        mc:Ignorable="d"
+        Title="Выбор пользователя ActiveDirectory" 
+        Height="450"
+        Width="800"
+        WindowStartupLocation="CenterOwner"
+        Background="#FFF0F0F0"
+        MinHeight="450"
+        MinWidth="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="ФИО сотрудника:"/>
+        
+        <Grid Grid.Row="1" Margin="0,6,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="TextBoxSearch" 
+                     PreviewKeyDown="TextBoxSearch_PreviewKeyDown"
+                     Height="20"
+                     VerticalAlignment="Center"/>
+
+            <Button Grid.Column="1"
+                    Width="100"
+                    Height="25"
+                    Margin="10,0,0,0"
+                    x:Name="ButtonSearch"
+                    Click="ButtonSearch_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="Media/Search_16x.png" Stretch="None"/>
+                    <TextBlock Text="Поиск" Margin="6,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="Результаты поиска:"/>
+
+        <DataGrid Grid.Row="3" 
+                  Margin="0,6,0,10"
+                  IsReadOnly="True"
+                  SelectionUnit="FullRow"
+                  CanUserDeleteRows="False"
+                  CanUserAddRows="False"
+                  CanUserReorderColumns="False"
+                  HorizontalGridLinesBrush="#FFC8C8C8"
+                  VerticalGridLinesBrush="LightGray"
+                  AutoGenerateColumns="False"
+                  ItemsSource="{Binding UserList}"
+                  x:Name="DataGridUsers"
+                  SelectionMode="Single"
+                  SelectionChanged="DataGridUsers_SelectionChanged"
+                  MouseDoubleClick="DataGridUsers_MouseDoubleClick"
+                  SelectedItem="{Binding SelectedUser}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Имя пользователя" 
+                                    Binding="{Binding Name, Mode=OneWay}"/>
+                <DataGridTextColumn Header="Должность"
+                                    Binding="{Binding Title, Mode=OneWay}"
+                                    Width="200"/>
+                <DataGridTextColumn Header="Отдел" 
+                                    Binding="{Binding Department, Mode=OneWay}"
+                                    Width="200"/>
+                <DataGridTextColumn Header="Организация" 
+                                    Binding="{Binding Company, Mode=OneWay}"
+                                    Width="200"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="4"
+                Width="100"
+                Height="25"
+                x:Name="ButtonSelect"
+                Click="ButtonSelect_Click"
+                IsEnabled="False">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Select_16x.png" Stretch="None"/>
+                <TextBlock Text="Выбрать" Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</Window>

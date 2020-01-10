@@ -23,7 +23,7 @@
         <TextBlock Text="Список доступных отчетов:"/>
 
         <DataGrid Grid.Row="1" 
-                  Margin="0,0,0,10"
+                  Margin="0,6,0,10"
                   IsReadOnly="True"
                   SelectionUnit="FullRow"
                   CanUserDeleteRows="False"
@@ -68,25 +68,158 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Grid.Row="2" 
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal">
-            <TextBlock Text="Период формирования с:" 
-                       VerticalAlignment="Center"/>
-            <DatePicker VerticalAlignment="Center" 
-                        Margin="6,0,6,0"
-                        x:Name="DatePickerBegin"/>
-            <TextBlock Text="по:" 
-                       VerticalAlignment="Center"/>
-            <DatePicker VerticalAlignment="Center" 
-                        Margin="6,0,0,0"
-                        x:Name="DatePickerEnd"/>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="26"/>
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="26"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="6"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Период:"
+                           VerticalAlignment="Center"/>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="2"
+                            HorizontalAlignment="Center">
+                    <DatePicker VerticalAlignment="Center"
+                                x:Name="DatePickerBegin"/>
+
+                    <Button Width="30"
+                            ToolTip="Приравнять дату окончания дате начала"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Margin="2,0,2,0"
+                            Tag="EquateEndDateToBeginDate"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/equalDates.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <DatePicker VerticalAlignment="Center"
+                                x:Name="DatePickerEnd"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            HorizontalAlignment="Center">
+                    <Button Width="30" 
+                            ToolTip="Текущий день"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="SetDatesToCurrentDay"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/1.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="Текущая неделя"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="SetDatesToCurrentWeek"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/7.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="Текущий месяц"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="SetDatesToCurrentMonth"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/31.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="Текущий год"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="SetDatesToCurrentYear"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/year.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="На месяц назад"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="GoToPreviousMonth"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/previousMonth.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="На день назад"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="GoToPreviousDay"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/previousDay.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="На день вперед"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="GoToNextDay"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/nextDay.png" 
+                               Stretch="None"/>
+                    </Button>
+
+                    <Button Width="30" 
+                            ToolTip="На месяц вперед"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Tag="GoToNextMonth"
+                            Click="ButtonDateSelect_Click">
+                        <Image Source="Media/nextMonth.png" 
+                               Stretch="None"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </StackPanel>
 
-        <Button Grid.Row="2"
-                Content="Сформировать"
+        <Button Grid.Row="2" 
+                Width="120"
+                Height="25"
+                VerticalAlignment="Center"
                 HorizontalAlignment="Right"
-                Width="100"
-                Click="ButtonCreate_Click"/>
+                ToolTip="Сформировать выбранный отчет с заданным периодом"
+                Click="ButtonCreate_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/Create_16x.png" 
+                       Stretch="None"/>
+                <TextBlock Text="Сформировать"
+                           Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="2"
+                HorizontalAlignment="Left"
+                Width="120"
+                Height="25"
+                Click="ButtonAccessRights_Click">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="Media/UserInformation_16x.png"
+                       Stretch="None"/>
+                <TextBlock Text="Права доступа"
+                           Margin="6,0,0,0"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </Window>
