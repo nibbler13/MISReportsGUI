@@ -40,16 +40,17 @@ namespace MISReportsGUI {
 			}
 
 			try {
-
 				byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8 };
 				byte[] iv = { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-				using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
-				using (var fs = new FileStream(configuration.configFilePath, FileMode.Open, FileAccess.Read))
-				using (var cryptoStream = new CryptoStream(fs, des.CreateDecryptor(key, iv), CryptoStreamMode.Read)) {
-					BinaryFormatter formatter = new BinaryFormatter();
-					configuration = (UserList)formatter.Deserialize(cryptoStream);
-					configuration.IsConfigReadedSuccessfull = true;
+                using (DESCryptoServiceProvider des = new DESCryptoServiceProvider()) {
+					des.Padding = PaddingMode.None;
+					using (var fs = new FileStream(configuration.configFilePath, FileMode.Open, FileAccess.Read))
+					using (var cryptoStream = new CryptoStream(fs, des.CreateDecryptor(key, iv), CryptoStreamMode.Read)) {
+						BinaryFormatter formatter = new BinaryFormatter();
+						configuration = (UserList)formatter.Deserialize(cryptoStream);
+						configuration.IsConfigReadedSuccessfull = true;
+					};
 				};
 			} catch (Exception e) {
 				MessageBox.Show("Configuration - !!! " + e.Message + Environment.NewLine + e.StackTrace, "", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -62,12 +63,13 @@ namespace MISReportsGUI {
 			byte[] key = { 1, 2, 3, 4, 5, 6, 7, 8 };
 			byte[] iv = { 1, 2, 3, 4, 5, 6, 7, 8 };
 			try {
-				using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
-				using (var fs = new FileStream(Instance.configFilePath, FileMode.OpenOrCreate, FileAccess.Write))
-				using (var cryptoStream = new CryptoStream(fs, des.CreateEncryptor(key, iv), CryptoStreamMode.Write)) {
-					BinaryFormatter formatter = new BinaryFormatter();
-					formatter.Serialize(cryptoStream, Instance);
-				};
+				using (DESCryptoServiceProvider des = new DESCryptoServiceProvider()) {
+					using (var fs = new FileStream(Instance.configFilePath, FileMode.OpenOrCreate, FileAccess.Write))
+					using (var cryptoStream = new CryptoStream(fs, des.CreateEncryptor(key, iv), CryptoStreamMode.Write)) {
+						BinaryFormatter formatter = new BinaryFormatter();
+						formatter.Serialize(cryptoStream, Instance);
+					};
+				}
 
 				MessageBox.Show("Изменения сохранены", string.Empty,
 					MessageBoxButton.OK, MessageBoxImage.Information);

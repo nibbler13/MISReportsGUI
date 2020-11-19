@@ -21,7 +21,9 @@ namespace MISReportsGUI {
 	/// Interaction logic for WindowDetails.xaml
 	/// </summary>
 	public partial class WindowDetails : Window {
+		private BackgroundWorker bw;
 		private ItemUser itemUser;
+
 		public WindowDetails(string title, string text, ItemUser itemUser = null, ItemReport itemReport = null) {
 			InitializeComponent();
 			Title = title;
@@ -33,6 +35,11 @@ namespace MISReportsGUI {
 				ButtonClose.IsEnabled = false;
 				Cursor = Cursors.Wait;
 			}
+
+			Closing += (s, e) => {
+				if (bw != null && bw.IsBusy)
+					bw.CancelAsync();
+			};
 		}
 
 		private void ButtonClose_Click(object sender, RoutedEventArgs e) {
@@ -60,20 +67,19 @@ namespace MISReportsGUI {
 				}
 			}
 
-			BackgroundWorker bw = new BackgroundWorker();
-			bw.WorkerReportsProgress = true;
+			bw = new BackgroundWorker {
+				WorkerReportsProgress = true
+			};
 
 			bw.ProgressChanged += (s, e) => {
 				if (e.UserState != null) {
-					Console.WriteLine("------>>> " + e.UserState.ToString());
 					TextBoxMain.Text += e.UserState.ToString() + Environment.NewLine;
 					TextBoxMain.ScrollToEnd();
-					Console.WriteLine("====>>> " + TextBoxMain.Text.Length);
 				}
 			};
 
 			bw.DoWork += (s, e) => {
-				Program.CreateReport(itemReport, itemUser != null ? itemUser.IsAdministrator : false);
+				Program.CreateReport(itemReport, true);// itemUser != null ? itemUser.IsAdministrator : false);
 			};
 
 			bw.RunWorkerCompleted += (s, e) => {

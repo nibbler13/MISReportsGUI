@@ -16,8 +16,14 @@ namespace MISReportsGUI {
 
 		public MainWindow() {
 			InitializeComponent();
+
+			Logging.ToLog(new string('-', 40));
+			Logging.ToLog("Запуск, пользователь: " + Environment.UserName + ", система: " + Environment.MachineName);
+
 			DataGridReports.DataContext = this;
-			DataGridReports.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription(nameof(MISReports.ItemReport.Name), System.ComponentModel.ListSortDirection.Ascending));
+			DataGridReports.Items.SortDescriptions.Add(
+				new System.ComponentModel.SortDescription(
+					nameof(MISReports.ItemReport.Name), System.ComponentModel.ListSortDirection.Ascending));
 			DatePickerBegin.SelectedDate = DateTime.Now;
 			DatePickerEnd.SelectedDate = DateTime.Now;
 
